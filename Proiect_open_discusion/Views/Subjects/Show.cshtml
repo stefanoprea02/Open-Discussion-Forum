@@ -1,0 +1,64 @@
+﻿<div class="categories col-md-9">
+<div class="subject-top">
+    <h2 style="margin-top: 10px">
+        <a href="/Subjects/Index?id=@ViewBag.Subject.CategoryId&sortOrder=desc&sortType=time">@ViewBag.Subject.Category.Name</a>
+    </h2>
+
+    <div class="subject-top-right">
+        @if (ViewBag.UserId == @ViewBag.Subject.UserId.ToString() || User.IsInRole("Moderator") || User.IsInRole("Administrator"))
+        {
+            <a href="/Subjects/Edit?id=@ViewBag.Subject.Id"><i class="fa-sharp fa-solid fa-pen icon"></i></a>
+            <form method="post" action="/Subjects/Delete?id=@ViewBag.Subject.Id">
+                <button type="submit" style="border:none; background-color: #ffffff00; padding: 0px">
+                    <i class="fa-solid fa-trash icon"></i>
+                </button>
+            </form>
+        }
+    </div>
+</div>
+
+<br />
+
+<div style="display: flex; font-size: 12px">
+    <p style="margin-right: 8px; margin-bottom: 4px; font-weight: 500">Posted by
+        <a asp-controller="Users" 
+            asp-action="Show" 
+            asp-route-id="@ViewBag.Subject.User.UserName"
+        >@ViewBag.Subject.User.UserName</a>
+    </p>
+    <p style="margin-bottom: 4px">@ViewBag.Subject.TimePosted</p>
+</div>
+<h5>@ViewBag.Subject.Title</h5>
+<p>@ViewBag.Subject.Text</p>
+
+<h4 style="margin-bottom: 15px">Comments</h4>
+@foreach(var com in ViewBag.Subject.Comments){
+    <div class="comment">
+        <div class="subject-top">
+            <div style="display: flex; font-size: 12px">
+                <p style="margin-right: 8px; margin-bottom: 4px; font-weight: 500">Posted by
+                    <a asp-controller="Users" 
+                        asp-action="Show" 
+                        asp-route-id="@com.UserName"
+                    >@com.UserName</a>
+                </p>
+                <p style="margin-bottom: 4px">@com.TimePosted</p>
+            </div>
+            <div class="subject-top-right">
+                @if (ViewBag.UserId == com.UserId.ToString() || User.IsInRole("Moderator") || User.IsInRole("Administrator"))
+                {
+                    <a href="/Comments/Edit?id=@com.Id"><i class="fa-sharp fa-solid fa-pen icon"></i></a>
+                    <form method="post" action="/Comments/Delete?id=@com.Id">
+                        <button type="submit" style="border:none; background-color: #ffffff00; padding: 0px">
+                            <i class="fa-solid fa-trash icon"></i>
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+        <p>@com.Text</p>
+    </div>
+}
+
+<a class="btn btn-success" href="/Comments/New?id=@ViewBag.Subject.Id" style="width: fit-content">New comment</a>
+</div>

@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Proiect_open_discusion.Models.Subject>
+@{
+    ViewData["Title"] = "Index";
+    Pager pager = new Pager();
+    int pageNo = 0;
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pageNo = pager.CurentPage;
+    }
+}
+<div class="categories col-md-9">
+<div style="display: flex; justify-content: space-between; padding: 10px;">
+    <h2>
+        @ViewBag.Category.Name
+    </h2>
+    <div>
+        <form asp-action="index">
+            <span class="btn-group">
+                <input type="hidden" name="id" value="@ViewBag.Category.Id" />
+                <input type="hidden" name="sortOrder" value="@ViewData["SortOrder"] "/>
+                <input type="hidden" name="sortType" value="@ViewData["SortType"]" />
+                <input style="border-top-right-radius:0px; border-bottom-right-radius:0px" class="form-control" type="text" name="searchText" value="@ViewData["SearchText"]" placeholder="Search Key" />
+                <input class="btn-sm btn-primary" style="border-radius: 0px .2rem .2rem 0px" type="submit" value="Search" />
+
+            </span>
+
+        </form>
+    </div>
+</div>
+
+@if (ViewData["SortType"].Equals("name"))
+{
+    <a href="/Subjects/Index?id=@ViewBag.Category.Id&searchText=@ViewData["SearchText"]&sortOrder=@ViewData["SortOrder"]&sortType=time"
+       style="font-weight: 500">Sort by time</a>
+}
+else
+{
+    <a href="/Subjects/Index?id=@ViewBag.Category.Id&searchText=@ViewData["SearchText"]&sortOrder=@ViewData["SortOrder"]&sortType=name"
+       style="font-weight: 500">Sort by name</a>
+}
+
+@if (ViewData["SortOrder"].Equals("asc"))
+{
+    <a href="/Subjects/Index?id=@ViewBag.Category.Id&searchText=@ViewData["SearchText"]&sortOrder=desc&sortType=@ViewData["SortType"]"
+       style="margin-bottom: 10px; font-weight: 500">Sort by descending</a>
+}
+else
+{
+    <a href="/Subjects/Index?id=@ViewBag.Category.Id&searchText=@ViewData["SearchText"]&sortOrder=asc&sortType=@ViewData["SortType"]"
+       style="margin-bottom: 10px; font-weight: 500">Sort by ascending</a>
+}
+
+@foreach (var subject in ViewBag.Subjects)
+{
+    <div class="subject">
+        <div class="subject-top">
+            <div class="subject-top-left">
+                <p style="margin-right: 8px; margin-bottom: 4px; font-weight: 500">
+                    Posted by
+                    <a asp-controller="Users"
+                    asp-action="Show"
+                    asp-route-id="@subject.User.UserName">@subject.User.UserName</a>
+                </p>
+                <p style="margin-bottom: 4px">@subject.TimePosted</p>
+            </div>
+                
+            <div class="subject-top-right">
+                @if (ViewBag.UserId == subject.UserId.ToString() || User.IsInRole("Moderator") || User.IsInRole("Administrator"))
+                {
+                    <a href="/Subjects/Edit?id=@subject.Id"><i class="fa-sharp fa-solid fa-pen icon"></i></a>
+                    <form method="post" action="/Subjects/Delete?id=@subject.Id">
+                        <button type="submit" style="border:none; background-color: white; padding: 0px">
+                            <i class="fa-solid fa-trash icon"></i>
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+        <a href="/Subjects/Show?id=@subject.Id" style="color: black">
+            <h6>@subject.Title</h6>
+            <p>@subject.Text</p>
+        </a>
+    </div>
+}
+
+<div style="display: flex; justify-content: space-between;">
+    <br />
+    <a class="btn btn-success" href="/Subjects/New" style="white-space: nowrap; margin-bottom: 15px">New post</a>
+    <br />
+
+    <div class="container" style="padding: 0px">
+        @if (pager.TotalPages > 0)
+        {
+            <ul class="pagination justify-content-end">
+                @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+                {
+                    <li class="page-item @(pge==pager.CurentPage ? "active": "")">
+                        <a class="page-link" 
+                        asp-controller="Subjects" 
+                        asp-action="Index"
+                        asp-route-id="@ViewBag.Category.Id"
+                        asp-route-searchText="@ViewData["SearchText"]" 
+                        asp-route-sortOrder="@ViewData["SortOrder"]"
+                        asp-route-sortType="@ViewData["SortType"]"
+                        asp-route-verifica=5
+                        asp-route-pg="@pge">
+                            @pge
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
+</div>

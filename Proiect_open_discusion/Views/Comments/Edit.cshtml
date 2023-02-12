@@ -1,0 +1,16 @@
+﻿@model Proiect_open_discusion.Models.Comment
+
+<h2>Edit Comment</h2>
+<br />
+
+@using (Html.BeginForm(controllerName: "Comments", actionName: "Edit", method: FormMethod.Post,
+   routeValues: new { id = Model.Id }))
+{
+    @Html.Label("Text", "Content")
+    <br />
+    @Html.TextArea("Text", null, new { @class = "form-control"})
+    @Html.ValidationMessageFor(m => m.Text, null, new { @class = "text-danger"})
+    <br />
+
+    <button class="btn btn-success" type="submit">Update</button>
+}

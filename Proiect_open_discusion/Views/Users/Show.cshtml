@@ -1,0 +1,102 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    
+*@
+@{
+}
+
+<div style="display: flex; align-items: center; flex-direction: column; margin: 30px 0px">
+    <h3 style="margin-bottom: 15px">@Model.UserName</h3>
+
+    @if (User.IsInRole("Administrator")){
+        @if (ViewBag.Role.Name == "User")
+        {
+            <a asp-controller="Users"
+                asp-action="GiveMod"
+                asp-route-id="@Model.UserName"
+                class="btn alert-success buton"
+            >Promote to moderator</a>
+        }
+        else if (ViewBag.Role.Name == "Moderator")
+        {
+            <a asp-controller="Users"
+               asp-action="TakeMod"
+               asp-route-id="@Model.UserName"
+               class="btn alert-danger buton"
+            >Demote to user</a>
+        }
+    }
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-9">
+        @if (ViewBag.Type == "Subiecte")
+        {
+            <a style="font-weight: 500" href="/Users/Show?id=@Model.UserName&type=Comentarii">See comments</a>
+            <hr />
+            @foreach (var subject in Model.Subjects)
+            {
+                <div class="subject">
+                    <div class="subject-top">
+                        <div class="subject-top-left">
+                            <p style="margin-right: 8px; margin-bottom: 4px; font-weight: 500">
+                                Posted by
+                                <a asp-controller="Users"
+                           asp-action="Show"
+                           asp-route-id="@subject.User.UserName">@subject.User.UserName</a>
+                            </p>
+                            <p style="margin-bottom: 4px">@subject.TimePosted</p>
+                        </div>
+
+                        <div class="subject-top-right">
+                            @if (ViewBag.UserId == subject.UserId.ToString() || User.IsInRole("Moderator") || User.IsInRole("Administrator"))
+                            {
+                                <a href="/Subjects/Edit?id=@subject.Id"><i class="fa-sharp fa-solid fa-pen icon"></i></a>
+                                <form method="post" action="/Subjects/Delete?id=@subject.Id">
+                                    <button type="submit" style="border:none; background-color: white; padding: 0px">
+                                        <i class="fa-solid fa-trash icon"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                    <a href="/Subjects/Show?id=@subject.Id" style="color: black">
+                        <h6>@subject.Title</h6>
+                        <p>@subject.Text</p>
+                    </a>
+                </div>
+            }
+        }else if(ViewBag.Type == "Comentarii"){
+            <a style="font-weight: 500" href="/Users/Show?id=@Model.UserName">See posts</a>
+            <hr />
+            @foreach (var com in Model.Comments)
+            {
+                <div class="comment">
+                    <div class="subject-top">
+                        <div style="display: flex; font-size: 12px">
+                            <p style="margin-right: 8px; margin-bottom: 4px; font-weight: 500">
+                                Posted by
+                                <a asp-controller="Users"
+                                asp-action="Show"
+                                asp-route-id="@com.UserName">@com.UserName</a>
+                            </p>
+                            <p style="margin-bottom: 4px">@com.TimePosted</p>
+                        </div>
+                        <div class="subject-top-right">
+                            @if (ViewBag.UserId == com.UserId.ToString() || User.IsInRole("Moderator") || User.IsInRole("Administrator"))
+                            {
+                                <a href="/Comments/Edit?id=@com.Id"><i class="fa-sharp fa-solid fa-pen icon"></i></a>
+                                <form method="post" action="/Comments/Delete?id=@com.Id">
+                                    <button type="submit" style="border:none; background-color: #ffffff00; padding: 0px">
+                                        <i class="fa-solid fa-trash icon"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                    <p>@com.Text</p>
+                </div>
+            }
+        }
+    </div>
+</div>

@@ -1,0 +1,15 @@
+﻿@model Proiect_open_discusion.Models.Category
+
+<h2>Modifica categoria</h2>
+<br />
+
+@using (Html.BeginForm(controllerName: "Categories", actionName: "Edit", method: FormMethod.Post,
+    routeValues: new {id = Model.Id})){
+        @Html.Label("Name", "Denumire categorie")
+        <br />
+        @Html.TextBox("Name", null, new { @class = "form-control"})
+        @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })
+        <br />
+
+        <button class="btn btn-success" type="submit">Update</button>
+    }
